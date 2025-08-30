@@ -16,20 +16,7 @@ android {
         multiDexEnabled = false
     }
 
-    signingConfigs {
-        getByName("debug") {
-            storeFile = file("demo.jks")
-            storePassword = "android"
-            keyAlias = "android"
-            keyPassword = "android"
-        }
-        create("release") {
-            storeFile = file("demo.jks")
-            storePassword = "android"
-            keyAlias = "android"
-            keyPassword = "android"
-        }
-    }
+    
 
     buildTypes {
         getByName("debug") {
