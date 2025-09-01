@@ -2,6 +2,7 @@
 
 An Android library that provides most of used in one Class.
 
+https://mohamed-zaitoon.github.io/apputils/
 
 ## Download
 
@@ -47,14 +48,7 @@ dependencies {
 }
 
 ```
-## Tutorial
-
-```html
- For Tutorial or Example Visit:
- https://mohamed-zaitoon.github.io/apputils/
  
- 
-```
 ## License 
 ```txt
   MIT License
