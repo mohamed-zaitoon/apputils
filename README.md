@@ -50,7 +50,7 @@ dependencies {
 ```
 ## Tutorial
  For Tutorial or Example Visit:
- [![]((https://mohamed-zaitoon.github.io/apputils/)]
+ https://mohamed-zaitoon.github.io/apputils/
  
  
 ```
