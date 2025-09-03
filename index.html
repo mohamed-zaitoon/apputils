@@ -1,169 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AppUtils Documentation</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background: #f4f6f9; color: #333; }
-    h1, h2, h3 { color: #222; }
-    .section { background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    pre { background: #272822; color: #f8f8f2; padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 14px; }
-    code { font-family: Consolas, monospace; }
-    .lang { font-weight: bold; color: #ff9800; display: inline-block; margin-bottom: 6px; }
-    a { color: #2196f3; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    img { display: block; margin-bottom: 20px; }
-    @media (max-width: 600px) { body { margin: 10px; font-size: 15px; } pre { font-size: 13px; } }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>AppUtils Documentation — Gradle KTS / Groovy / Kotlin</title>
+<style>
+  /* ---------- Light mode only, Material-like ---------- */
+  :root{
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --accent: #6200ee;
+    --accent-700: #3700b3;
+    --text: #202124;
+    --muted: #666;
+    --radius: 12px;
+    --max-width: 1100px;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:22px;
+    line-height:1.5;
+  }
+  .container{max-width:var(--max-width);margin:0 auto;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  header .brand{display:flex;flex-direction:column}
+  h1{font-size:1.6rem;color:var(--accent);margin:0}
+  .subtitle{color:var(--muted);font-size:0.95rem}
+  .badge img{max-width:170px;height:auto;display:block}
+
+  /* Card sections */
+  .section{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:16px;
+    box-shadow:0 6px 18px rgba(16,24,40,0.06);
+    transition:box-shadow .18s ease, transform .12s ease;
+  }
+  .section:hover{box-shadow:0 10px 28px rgba(16,24,40,0.10);transform:translateY(-2px)}
+  .section h2{font-size:1.05rem;margin:0 0 10px 0;display:flex;align-items:center;justify-content:space-between; gap:12px}
+  .meta{color:var(--muted);font-size:0.95rem;margin-bottom:8px}
+
+  /* Code block */
+  pre{
+    background:#f5f7fb;
+    color:#1e1e1e;
+    padding:14px;
+    border-radius:9px;
+    overflow:auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+    font-size:0.92rem;
+    position:relative;
+    white-space:pre-wrap;
+    word-break:break-word;
+    margin:0;
+  }
+  code{display:block;white-space:pre-wrap}
+
+  /* Copy button */
+  .copy-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:var(--accent);
+    color:#fff;
+    border:0;
+    border-radius:8px;
+    padding:6px 10px;
+    cursor:pointer;
+    font-size:0.82rem;
+    box-shadow:0 6px 12px rgba(98,0,238,0.12);
+  }
+  .copy-btn:active{transform:translateY(1px)}
+  .copy-btn[aria-pressed="true"]{background:var(--accent-700)}
+  .copy-btn:focus{outline:3px solid rgba(98,0,238,0.12);outline-offset:2px}
+
+  /* Make license non-selectable explicitly */
+  .license-pre{
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    background:#fff8e1;
+    color:#333;
+    border:1px solid rgba(0,0,0,0.04);
+  }
+
+  /* Small screens */
+  @media (max-width:640px){
+    body{padding:14px}
+    .copy-btn{padding:8px 10px;font-size:0.78rem;top:8px;right:8px}
+    h1{font-size:1.4rem}
+  }
+
+  /* Accessibility helper (focus states already set on copy-btn) */
+  footer{color:var(--muted);text-align:center;padding-top:10px;font-size:0.9rem;margin-top:10px}
+</style>
 </head>
 <body>
+  <div class="container" role="main">
+    <header>
+      <div class="brand" aria-hidden="false">
+        <h1>📘 AppUtils Documentation</h1>
+        <div class="subtitle">Examples: <strong>Gradle KTS</strong>, <strong>Gradle (Groovy)</strong>, and <strong>Kotlin</strong> — (No Java examples)</div>
+      </div>
+      <div class="badge" aria-hidden="true">
+        <a href="https://jitpack.io/#mohamed-zaitoon/apputils" target="_blank" rel="noopener noreferrer">
+          <img src="https://jitpack.io/v/mohamed-zaitoon/apputils.svg" alt="JitPack version">
+        </a>
+      </div>
+    </header>
 
-  <h1>📘 AppUtils Documentation</h1>
-  <p>A complete guide on how to use <b>AppUtils</b> in Android projects (Java / Kotlin).</p>
+    <!-- Download & Setup: KTS + Groovy -->
+    <section class="section" id="setup">
+      <h2>🔹 Download & Setup (Gradle KTS & Groovy)</h2>
+      <div class="meta">Add JitPack and library dependency. Choose the block for your Gradle DSL.</div>
 
-  <!-- JitPack Badge -->
-  <a href="https://jitpack.io/#mohamed-zaitoon/apputils">
-    <img src="https://jitpack.io/v/mohamed-zaitoon/apputils.svg" alt="JitPack version">
-  </a>
+      <div style="margin-bottom:12px">
+        <strong>Kotlin DSL (build.gradle.kts)</strong>
+        <pre aria-labelledby="kts-title">
+<button class="copy-btn" aria-label="Copy KTS block" onclick="copyCode(this)">Copy</button>
+<code>
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}
 
-  <!-- Download / JitPack -->
-  <div class="section">
-    <h2>🔹 Download & Setup</h2>
-    <pre><code>repositories {
+dependencies {
+    implementation("com.github.mohamed-zaitoon:apputils:1.2.2")
+}
+</code>
+        </pre>
+      </div>
+
+      <div>
+        <strong>Groovy DSL (build.gradle)</strong>
+        <pre aria-labelledby="groovy-title">
+<button class="copy-btn" aria-label="Copy Groovy block" onclick="copyCode(this)">Copy</button>
+<code>
+repositories {
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     implementation 'com.github.mohamed-zaitoon:apputils:1.2.2'
-}</code></pre>
-  </div>
+}
+</code>
+        </pre>
+      </div>
+    </section>
 
-  <!-- Initialization -->
-<div class="section">
-  <h2>🔹 Initialize AppUtils</h2>
-  <p>Call this in your <code>Application</code> class <b>onCreate()</b>:</p>
-  <pre><code>AppUtils.initialize(this)
-registerActivityLifecycleCallbacks(AppUtils.activityTracker)</code></pre>
-</div>
-
-  <!-- Toast -->
-  <div class="section">
-    <h2>🔹 Toast</h2>
-    <pre><code>AppUtils.showToast("Hello World")
-AppUtils.showToast("Long Toast", long = true)</code></pre>
-  </div>
-  
-  <!-- Connectivity -->
-  <div class="section">
-    <h2>🔹 Connectivity</h2>
-    <pre><code>val connected = AppUtils.isConnected
-AppUtils.addConnectionListener { isOnline ->
-    AppUtils.showToast("Network changed: $isOnline")
-}</code></pre>
-  </div>
-
-  <!-- Clipboard -->
-  <div class="section">
-    <h2>🔹 Clipboard</h2>
-    <pre><code>AppUtils.copyText("Copied text")
-val copied = AppUtils.getCopiedText()</code></pre>
-  </div>
-
-  <!-- Device Info -->
-  <div class="section">
-    <h2>🔹 Device Info</h2>
-    <pre><code>val model = AppUtils.getDeviceModel()
-val version = AppUtils.getAndroidVersion()</code></pre>
-  </div>
-
-  <!-- Logging -->
-  <div class="section">
-    <h2>🔹 Logging</h2>
-    <pre><code>AppUtils.log("DEBUG", "This is a log message")</code></pre>
-  </div>
-
-  <!-- Dialog -->
-  <div class="section">
-    <h2>🔹 Dialog</h2>
-    <pre><code>AppUtils.showDialog("Title", "Message")</code></pre>
-  </div>
-
-  <!-- Permissions -->
-  <div class="section">
-    <h2>🔹 Permissions</h2>
-    <pre><code>AppUtils.requestPermission(this, Manifest.permission.CAMERA, 1001)</code></pre>
-  </div>
-
-  <!-- Keyboard -->
-  <div class="section">
-    <h2>🔹 Keyboard</h2>
-    <pre><code>AppUtils.hideKeyboard(this)</code></pre>
-  </div>
-
-  <!-- Sharing -->
-  <div class="section">
-    <h2>🔹 Sharing</h2>
-    <pre><code>AppUtils.shareText(this, "Hello from AppUtils!")</code></pre>
-  </div>
-
-  <!-- Vibration -->
-  <div class="section">
-    <h2>🔹 Vibration</h2>
-    <pre><code>AppUtils.vibrate(300)
-AppUtils.vibratePattern(longArrayOf(0,200,100,300), -1)</code></pre>
-  </div>
-
-  <!-- File -->
-  <div class="section">
-    <h2>🔹 File Utils</h2>
-    <pre><code>AppUtils.writeFile("test.txt", "Hello File!")
-val content = AppUtils.readFile("test.txt")
-val deleted = AppUtils.deleteFile("test.txt")</code></pre>
-  </div>
-
-  <!-- Open URL -->
-  <div class="section">
-    <h2>🔹 Open URL</h2>
-    <pre><code>AppUtils.openUrl(this, "https://google.com")</code></pre>
-  </div>
-
-  <!-- Set Locale / Language -->
-  <div class="section">
-    <h2>🔹 Set Locale / Language</h2>
-    <pre><code>AppUtils.setLanguage("ar")
-val lang = AppUtils.loadLanguage()</code></pre>
-  </div>
-
-  <!-- Screen Capture -->
-  <div class="section">
-    <h2>🔹 Screen Capture</h2>
-    <pre><code>AppUtils.blockCapture()
-AppUtils.unblockCapture()</code></pre>
-  </div>
-
-  <!-- Notification -->
-  <div class="section">
-    <h2>🔹 Notification</h2>
-    <pre><code>AppUtils.showNotification(
-    "default_channel",
-    "Hello",
-    "This is a notification",
-    R.drawable.ic_launcher_foreground
-)</code></pre>
-  </div>
-
-  <!-- App Signatures -->
-  <div class="section">
-    <h2>🔹 App Signatures</h2>
-    <pre><code>val signatures = AppUtils.getAppSignatures()
-val valid = AppUtils.validateAppSignature("YOUR_SHA1")</code></pre>
-  </div>
-
-  <!-- Full Usage Flow -->
-  <div class="section">
-    <h2>🔹 Full Usage Flow — All Functions (Kotlin)</h2>
-    <pre><code>class MyApplication : Application() {
+    <!-- Initialization (Kotlin) -->
+    <section class="section" id="initialize">
+      <h2>🔹 Initialize AppUtils (Kotlin)</h2>
+      <div class="meta">Call from Application.onCreate and register lifecycle callbacks.</div>
+      <pre>
+<button class="copy-btn" aria-label="Copy Initialize block" onclick="copyCode(this)">Copy</button>
+<code>
+class MyApplication : Application() {
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(AppUtils.attachBaseContext(newBase))
     }
@@ -173,7 +172,212 @@ val valid = AppUtils.validateAppSignature("YOUR_SHA1")</code></pre>
         registerActivityLifecycleCallbacks(AppUtils.activityTracker)
     }
 }
+</code>
+      </pre>
+    </section>
 
+    <!-- Toast -->
+    <section class="section" id="toast">
+      <h2>🔹 Toast (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Toast block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.showToast("Hello World")
+AppUtils.showToast("Long Toast", long = true)
+</code>
+      </pre>
+    </section>
+
+    <!-- Connectivity -->
+    <section class="section" id="connectivity">
+      <h2>🔹 Connectivity (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Connectivity block" onclick="copyCode(this)">Copy</button>
+<code>
+val connected = AppUtils.isConnected
+AppUtils.addConnectionListener { isOnline ->
+    AppUtils.showToast("Network changed: $isOnline")
+}
+</code>
+      </pre>
+    </section>
+
+    <!-- Clipboard -->
+    <section class="section" id="clipboard">
+      <h2>🔹 Clipboard (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Clipboard block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.copyText("Copied text")
+val copied = AppUtils.getCopiedText()
+</code>
+      </pre>
+    </section>
+
+    <!-- Device Info -->
+    <section class="section" id="device">
+      <h2>🔹 Device Info (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Device Info block" onclick="copyCode(this)">Copy</button>
+<code>
+val model = AppUtils.getDeviceModel()
+val version = AppUtils.getAndroidVersion()
+</code>
+      </pre>
+    </section>
+
+    <!-- Dialog -->
+    <section class="section" id="dialog">
+      <h2>🔹 Dialog (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Dialog block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.showDialog(
+    title = "Title",
+    message = "Message",
+    positiveButton = "OK",
+    onPositiveClick = { /* handle */ }
+)
+</code>
+      </pre>
+    </section>
+
+    <!-- Permissions -->
+    <section class="section" id="permissions">
+      <h2>🔹 Permissions (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Permissions block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.requestPermission(this, Manifest.permission.CAMERA, 1001)
+</code>
+      </pre>
+    </section>
+
+    <!-- Keyboard -->
+    <section class="section" id="keyboard">
+      <h2>🔹 Keyboard (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Keyboard block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.hideKeyboard(this)
+</code>
+      </pre>
+    </section>
+
+    <!-- Sharing -->
+    <section class="section" id="sharing">
+      <h2>🔹 Sharing (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Sharing block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.shareText(this, "Hello from AppUtils!")
+</code>
+      </pre>
+    </section>
+
+    <!-- Vibration -->
+    <section class="section" id="vibration">
+      <h2>🔹 Vibration (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Vibration block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.vibrate(300)
+AppUtils.vibratePattern(longArrayOf(0,200,100,300), -1)
+</code>
+      </pre>
+    </section>
+
+    <!-- File Utils -->
+    <section class="section" id="file">
+      <h2>🔹 File Utils (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy File Utils block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.writeFile("test.txt", "Hello File!")
+val content = AppUtils.readFile("test.txt")
+val deleted = AppUtils.deleteFile("test.txt")
+</code>
+      </pre>
+    </section>
+
+    <!-- Open URL -->
+    <section class="section" id="open-url">
+      <h2>🔹 Open URL (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Open URL block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.openUrl(this, "https://google.com")
+</code>
+      </pre>
+    </section>
+
+    <!-- Locale -->
+    <section class="section" id="locale">
+      <h2>🔹 Set Locale / Language (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Locale block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.setLanguage("en")
+val lang = AppUtils.loadLanguage()
+</code>
+      </pre>
+    </section>
+
+    <!-- Screen Capture -->
+    <section class="section" id="screen-capture">
+      <h2>🔹 Screen Capture (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Screen Capture block" onclick="copyCode(this)">Copy</button>
+<code>
+AppUtils.blockCapture()
+AppUtils.unblockCapture()
+</code>
+      </pre>
+    </section>
+
+    <!-- Notification -->
+    <section class="section" id="notification">
+      <h2>🔹 Notification (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Notification block" onclick="copyCode(this)">Copy</button>
+<code>
+val intent = Intent(this, ExampleActivity::class.java)
+val pendingIntent = PendingIntent.getActivity(
+    this,
+    0,
+    intent,
+    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+)
+
+AppUtils.showNotification(
+    channelId = "default_channel",
+    title = "Hello",
+    text = "This is a notification",
+    iconResId = R.drawable.ic_launcher,
+    intent = pendingIntent
+)
+</code>
+      </pre>
+    </section>
+
+    <!-- App Signatures -->
+    <section class="section" id="signatures">
+      <h2>🔹 App Signatures (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Signatures block" onclick="copyCode(this)">Copy</button>
+<code>
+val signatures = AppUtils.getAppSignatures()
+val valid = AppUtils.validateAppSignature("YOUR_SHA1")
+</code>
+      </pre>
+    </section>
+
+    <!-- Full Usage -->
+    <section class="section" id="full-usage">
+      <h2>🔹 Full Usage Flow — All Functions (Kotlin)</h2>
+      <pre>
+<button class="copy-btn" aria-label="Copy Full Usage block" onclick="copyCode(this)">Copy</button>
+<code>
 class DemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -195,9 +399,6 @@ class DemoActivity : AppCompatActivity() {
         AppUtils.shareText(this, "Sharing text")
         AppUtils.vibrate(300)
         AppUtils.vibratePattern(longArrayOf(0,200,100,300), -1)
-        AppUtils.writeFile("test.txt", "Hello File")
-        val content = AppUtils.readFile("test.txt")
-        val deleted = AppUtils.deleteFile("test.txt")
         AppUtils.openUrl(this, "https://google.com")
         AppUtils.blockCapture()
         AppUtils.unblockCapture()
@@ -207,18 +408,87 @@ class DemoActivity : AppCompatActivity() {
         AppUtils.copyText("Copied text")
         val copied = AppUtils.getCopiedText()
     }
-}</code></pre>
+}
+</code>
+      </pre>
+    </section>
+
+    <!-- License — non-copyable -->
+    <section class="section" id="license">
+      <h2>🔹 License</h2>
+      <div class="meta">This license text is intentionally non-selectable (not copyable).</div>
+      <pre class="license-pre" aria-hidden="false"><code>MIT License
+
+Copyright (c) 2025 Mohamed Zaitoon</code></pre>
+    </section>
+
+    <footer>
+      © 2025 Mohamed Zaitoon — All rights reserved. • Licensed under the MIT License.
+    </footer>
   </div>
 
-  <!-- License -->
-  <div class="section">
-    <h2>🔹 License</h2>
-    <pre><code>
-MIT License
+  <script>
+    // Copy button handler — safe selection of the <code> element
+    function copyCode(btn){
+      try {
+        // find nearest <code> inside same pre (or next sibling)
+        const pre = btn.parentElement;
+        let codeEl = pre.querySelector('code');
+        if(!codeEl){
+          // fallback: try next sibling
+          const next = btn.nextElementSibling;
+          if(next && next.tagName.toLowerCase()==='code') codeEl = next;
+        }
+        if(!codeEl) return;
+        const text = codeEl.innerText;
 
-Copyright (c) 2025 Mohamed Zaitoon
-    </code></pre>
-  </div>
+        // Use Clipboard API if available, otherwise execCommand fallback
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(()=> {
+            btn.innerText = 'Copied!';
+            btn.setAttribute('aria-pressed','true');
+            setTimeout(()=>{ btn.innerText = 'Copy'; btn.setAttribute('aria-pressed','false'); }, 1000);
+          }).catch(()=> fallbackCopy(text, btn));
+        } else {
+          fallbackCopy(text, btn);
+        }
+      } catch(e){
+        console.error('copy failed', e);
+      }
+    }
 
+    function fallbackCopy(text, btn){
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly','');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if(ok){
+          btn.innerText = 'Copied!';
+          btn.setAttribute('aria-pressed','true');
+          setTimeout(()=>{ btn.innerText = 'Copy'; btn.setAttribute('aria-pressed','false'); }, 1000);
+        } else {
+          // silent fail
+          btn.innerText = 'Copy';
+        }
+      } catch(err){
+        console.error(err);
+      }
+    }
+
+    // Accessibility: allow Enter/Space on focused buttons (browser handles by default)
+    document.addEventListener('keydown', function(e){
+      if((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.classList.contains('copy-btn')){
+        e.preventDefault();
+        document.activeElement.click();
+      }
+    });
+  </script>
 </body>
 </html>
