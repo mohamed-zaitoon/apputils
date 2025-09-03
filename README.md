@@ -18,7 +18,7 @@ repositories {
 }
 dependencies {
 
-implementation 'com.github.mohamed-zaitoon:apputils:1.3.0'
+implementation 'com.github.mohamed-zaitoon:apputils:1.3.1'
 	
 
  
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.mohamed-zaitoon:apputils:1.3.0")
+    implementation("com.github.mohamed-zaitoon:apputils:1.3.1")
 }
 
 ```
