@@ -27,6 +27,7 @@ def main():
     remove_dir('.gradle')
     remove_dir('.kotlin')
     remove_dir('build')
+    remove_dir('library/build')
     remove_dir('app/.cxx')
     remove_dir('app/build')
     remove_file('local.properties')
