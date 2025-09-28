@@ -1,72 +1,117 @@
 #!/usr/bin/env python3
-import shutil
 import sys
 import subprocess
 import os
-import re
 from datetime import datetime, timezone
 
 DEFAULT_GIT_NAME = "mohamed-zaitoon"
 DEFAULT_GIT_EMAIL = "mohamedzaitoon01@gmail.com"
 
-def run_command(cmd, cwd=None, silent=False):
+def run(cmd, cwd=None, silent=False, check=False):
     try:
-        process = subprocess.Popen(
+        p = subprocess.Popen(
             cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             shell=True, universal_newlines=True
         )
-        output = ""
-        for line in process.stdout:
+        out = []
+        for line in p.stdout:
             if not silent:
-                print(line, end='')
-            output += line
-        process.wait()
-        return process.returncode, output
+                print(line, end="")
+            out.append(line)
+        p.wait()
+        output = "".join(out)
+        if check and p.returncode != 0:
+            # أبين للمستخدم بوضوح إن فيه فشل وأطلع بنفس كود الخطأ
+            print("\n‼️ Command failed:", cmd)
+            sys.exit(p.returncode)
+        return p.returncode, output
     except Exception as e:
         print(f"Error running command {cmd}: {e}")
+        if check:
+            sys.exit(1)
         return 1, ""
 
 def ensure_git_identity():
-    _, name = run_command("git config --global user.name", silent=True)
-    _, email = run_command("git config --global user.email", silent=True)
+    _, name = run("git config --global user.name", silent=True)
+    _, email = run("git config --global user.email", silent=True)
     if not name.strip():
-        run_command(f"git config --global user.name '{DEFAULT_GIT_NAME}'")
+        run(f"git config --global user.name \"{DEFAULT_GIT_NAME}\"", check=True)
     if not email.strip():
-        run_command(f"git config --global user.email '{DEFAULT_GIT_EMAIL}'")
+        run(f"git config --global user.email \"{DEFAULT_GIT_EMAIL}\"", check=True)
 
-def convert_https_to_ssh(https_url):
-    match = re.match(r"https://github\.com/(.+?)/(.+?)(\.git)?$", https_url)
-    if match:
-        username = match.group(1)
-        repo = match.group(2)
-        return f"git@github.com:{username}/{repo}.git"
-    return None
+def get_remote_url():
+    code, url = run("git remote get-url origin", silent=True)
+    return url.strip() if code == 0 else ""
 
-def check_and_fix_remote(project_dir):
-    _, remote_url = run_command("git remote get-url origin", cwd=project_dir, silent=True)
-    remote_url = remote_url.strip()
-    if remote_url.startswith("https://"):
-        ssh_url = convert_https_to_ssh(remote_url)
-        if ssh_url:
-            run_command(f"git remote set-url origin {ssh_url}", cwd=project_dir)
+def ensure_https_remote(expected_https=None):
+    """لو الريموت SSH هنحوّله لHTTPS. ولن نحوّل HTTPS إلى SSH نهائيًا."""
+    current = get_remote_url()
+    if not current:
+        # مفيش remote اسمه origin — نضيفه لو اتبعت لنا واحد
+        if expected_https:
+            run(f"git remote add origin {expected_https}", check=True)
+        return
+
+    if current.startswith("git@github.com:"):
+        # حوّل SSH إلى HTTPS بنفس الريبو
+        # git@github.com:USER/REPO.git -> https://github.com/USER/REPO.git
+        tail = current.split("git@github.com:")[-1]
+        if tail.endswith(".git"):
+            tail = tail[:-4]
+        https_url = f"https://github.com/{tail}.git"
+        run(f"git remote set-url origin {https_url}", check=True)
+
+def git_current_branch():
+    _, br = run("git rev-parse --abbrev-ref HEAD", silent=True)
+    return (br or "").strip() or "main"
 
 def main():
     project_dir = os.getcwd()
-    run_command(f"git config --global --add safe.directory {project_dir}")
-    ensure_git_identity()
-    check_and_fix_remote(project_dir)
+    # امنع تحذير safe.directory
+    run(f"git config --global --add safe.directory \"{project_dir}\"", silent=True)
 
-    _, output = run_command("git status --porcelain", cwd=project_dir, silent=True)
-    if not output.strip():
+    ensure_git_identity()
+
+    # ثبّت إن الريموت HTTPS (لا تحوّل أبداً لSSH)
+    # لو حابب تثبت عنوان HTTPS معيّن، مرره كمتغير بيئة GIT_REMOTE
+    expected = os.environ.get("GIT_REMOTE", "").strip()
+    ensure_https_remote(expected_https=expected)
+
+    # لو مفيش تغييرات، اخرج بهدوء
+    code, changes = run("git status --porcelain", silent=True)
+    if code != 0:
+        sys.exit(code)
+    if not changes.strip():
         print("No changes to commit.")
         sys.exit(0)
 
-    run_command("git add -A", cwd=project_dir)
+    # add + commit
+    run("git add -A", check=True)
     utc_time = datetime.now(timezone.utc).strftime("UTC %Y-%m-%d %H:%M:%S")
     commit_msg = f"Commit {utc_time}"
-    run_command(f'git commit -m "{commit_msg}"', cwd=project_dir)
-    run_command("git push origin HEAD", cwd=project_dir)
-    print("Push completed.")
+    # في حال لا يوجد شيء للإضافة بعد add -A، commit سيرجع non-zero؛ نعالجه بلطف
+    code, _ = run(f'git commit -m "{commit_msg}"', silent=False)
+    if code != 0:
+        # لو مفيش تغييرات فعلية بعد add، نكمل push عادي
+        _, _ = run("git diff --cached --name-only", silent=True)
+
+    # ادفع على نفس الفرع
+    branch = git_current_branch()
+    # لو معاك PAT وتريد تمنع الـ prompt، تقدر تمرّره في ENV باسم GH_TOKEN
+    # سكربت هيستخدم الـ remote الحالي (HTTPS). Git Credential Manager هيكفي عادةً.
+    push_cmd = f"git push -u origin {branch}"
+    code, _ = run(push_cmd)
+    if code != 0:
+        print("\n❌ Push failed.")
+        print("تلميحات سريعة:")
+        print("  • تأكد إن الـ remote HTTPS صحيح:", get_remote_url() or expected or "<no remote>")
+        print("  • لو أول مرة، Git هيطلب تسجيل دخول. استخدم Username + PAT بدل الباسورد.")
+        print("  • لتعيين الريموت صراحةً:")
+        print("      git remote set-url origin https://github.com/mohamed-zaitoon/apputils.git")
+        print("  • توليد PAT: GitHub → Settings → Developer settings → Personal access tokens")
+        sys.exit(code)
+
+    print("✅ Push completed successfully.")
 
 if __name__ == '__main__':
     main()
