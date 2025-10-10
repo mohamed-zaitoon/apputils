@@ -2,6 +2,7 @@
 import sys
 import subprocess
 import os
+import platform
 from datetime import datetime, timezone
 
 DEFAULT_GIT_NAME = "mohamed-zaitoon"
@@ -31,8 +32,20 @@ def run(cmd, cwd=None, silent=False, check=False):
             sys.exit(1)
         return 1, ""
 
+def detect_system():
+    system = platform.system().lower()
+    if "linux" in system:
+        if "ANDROID_ROOT" in os.environ or "TERMUX_VERSION" in os.environ:
+            return "Android (Termux)"
+        return "Linux (Ubuntu)"
+    elif "windows" in system:
+        return "Windows"
+    elif "darwin" in system:
+        return "macOS"
+    else:
+        return "Unknown"
+
 def ensure_git_identity():
-    """Ensure git global user.name and user.email are set."""
     _, name = run("git config --global user.name", silent=True)
     _, email = run("git config --global user.email", silent=True)
     if not name.strip():
@@ -45,10 +58,6 @@ def get_remote_url():
     return url.strip() if code == 0 else ""
 
 def ensure_https_remote(expected_https=None):
-    """
-    Ensure the remote 'origin' is HTTPS.
-    If it's SSH, convert it to HTTPS. Never convert HTTPS to SSH.
-    """
     current = get_remote_url()
     if not current:
         if expected_https:
@@ -67,22 +76,38 @@ def git_current_branch():
 
 def main():
     project_dir = os.getcwd()
+    system_name = detect_system()
+
     run(f"git config --global --add safe.directory \"{project_dir}\"", silent=True)
     ensure_git_identity()
 
     expected = os.environ.get("GIT_REMOTE", "").strip()
     ensure_https_remote(expected_https=expected)
 
+    print(f"\n🖥️ Detected system: {system_name}")
+
     code, changes = run("git status --porcelain", silent=True)
     if code != 0:
         sys.exit(code)
+
+    # 🧹 Remove Termux-only Gradle property before committing
+    gradle_props = os.path.join(project_dir, "gradle.properties")
+    if os.path.exists(gradle_props):
+        with open(gradle_props, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        new_lines = [l for l in lines if not l.startswith("android.aapt2FromMavenOverride")]
+        if lines != new_lines:
+            with open(gradle_props, "w", encoding="utf-8") as f:
+                f.writelines(new_lines)
+            print("🧹 Removed Termux-only AAPT2 override before Git push.")
+
     if not changes.strip():
         print("No changes to commit.")
         sys.exit(0)
 
     run("git add -A", check=True)
     utc_time = datetime.now(timezone.utc).strftime("UTC %Y-%m-%d %H:%M:%S")
-    commit_msg = f"Commit {utc_time}"
+    commit_msg = f"Commit {utc_time} from {system_name}"
     code, _ = run(f'git commit -m "{commit_msg}"', silent=False)
     if code != 0:
         _, _ = run("git diff --cached --name-only", silent=True)
@@ -93,15 +118,12 @@ def main():
     if code != 0:
         print("\n❌ Push failed.")
         print("Quick tips:")
-        print("  • Check that the remote HTTPS URL is correct:", get_remote_url() or expected or "<no remote>")
-        print("  • If this is your first push, Git will ask for credentials.")
-        print("    Use your GitHub username and a Personal Access Token (PAT) instead of a password.")
-        print("  • To explicitly set the remote URL:")
-        print("      git remote set-url origin https://github.com/mohamed-zaitoon/{tail}.git")
-        print("  • Generate a PAT: GitHub → Settings → Developer settings → Personal access tokens")
+        print("  • Check the remote HTTPS URL:", get_remote_url() or expected or "<no remote>")
+        print("  • Use your GitHub username and a Personal Access Token (PAT) instead of a password.")
         sys.exit(code)
 
-    print("✅ Push completed successfully.")
+    print(f"\n✅ Push completed successfully at {utc_time}")
+    print(f"📡 Device: {system_name}")
 
 if __name__ == '__main__':
     main()
