@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "mz.example"
-        minSdk = 29
+        minSdk = 24
         targetSdk = 36
-        versionCode = 8123
-        versionName = "8.12.3"
+        versionCode = 8124
+        versionName = "8.12.4"
         multiDexEnabled = false
     }
 
@@ -37,13 +37,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
         }
     }
 }
